@@ -270,6 +270,21 @@ public class ServletUtil {
         return email.matches(LEGAL_EMAIL_ADDRESS);
     }
 
+    public static boolean isAdmin(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+
+        // Recupera username e password dell'amministratore dalla sessione
+        String adminUsername = (String) session.getAttribute("adminUsername");
+        String adminPassword = (String) session.getAttribute("adminPassword");
+
+        // Controlla se le credenziali sono presenti
+        if (adminUsername == null || adminPassword == null) {
+            LOG.info("Credenziali admin non trovate nella sessione.");
+            return false;
+        }
+
+        // Verifica se l'utente è un amministratore valido
+        return DBUtil.isValidAdmin(adminUsername, adminPassword);
     public static String generateSpecialPrizeCode(HttpServletRequest request) {
         LOG.debug("generateSpecialPrizeCode");
 
