@@ -467,8 +467,15 @@ public class DBUtil {
 
         try {
             Connection connection = getConnection();
-            Statement statement = connection.createStatement();
-            statement.execute("INSERT INTO PEOPLE (USER_ID,PASSWORD,FIRST_NAME,LAST_NAME,ROLE,EMAIL) VALUES ('" + username + "','" + password + "', '" + firstname + "', '" + lastname + "','user', '" + email + "')");
+            String sql = "INSERT INTO PEOPLE (USER_ID, PASSWORD, FIRST_NAME, LAST_NAME, ROLE, EMAIL) VALUES (?, ?, ?, ?, 'user', ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, firstname);
+            preparedStatement.setString(4, lastname);
+            preparedStatement.setString(5, email);
+            
+            preparedStatement.executeUpdate();
             return null;
         } catch (SQLException e) {
             LOG.error(e.toString());
@@ -476,13 +483,18 @@ public class DBUtil {
         }
     }
 
+
     public static String changePassword(String username, String password) {
         LOG.debug("changePassword('" + username + "', '" + password + "')");
 
         try {
             Connection connection = getConnection();
-            Statement statement = connection.createStatement();
-            statement.execute("UPDATE PEOPLE SET PASSWORD = '" + password + "' WHERE USER_ID = '" + username + "'");
+            String sql = "UPDATE PEOPLE SET PASSWORD = ? WHERE USER_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, password);
+            preparedStatement.setString(2, username);
+            
+            preparedStatement.executeUpdate();
             return null;
         } catch (SQLException e) {
             LOG.error(e.toString());
