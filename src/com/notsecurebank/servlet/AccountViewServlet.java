@@ -47,12 +47,21 @@ public class AccountViewServlet extends HttpServlet {
 
         // show transactions within the specified date range (if any)
         if (request.getRequestURL().toString().endsWith("showTransactions")) {
-            String startTime = request.getParameter("startDate");
-            String endTime = request.getParameter("endDate");
+            String startTime = sanitizeInput(request.getParameter("startDate"));
+            String endTime = sanitizeInput(request.getParameter("endDate"));
 
             LOG.info("Transactions within '" + startTime + "' and '" + endTime + "'.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/bank/transaction.jsp?" + ((startTime != null) ? "&startTime=" + startTime : "") + ((endTime != null) ? "&endTime=" + endTime : ""));
             dispatcher.forward(request, response);
         }
+    }
+    
+    // Metodo per la sanificazione dell'input
+    private String sanitizeInput(String input) {
+        if (input == null) {
+            return null;
+        }
+        // Sostituisci o rimuovi i caratteri pericolosi
+        return input.replaceAll("[\n\r\t]", "_");
     }
 }
